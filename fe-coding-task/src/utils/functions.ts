@@ -27,3 +27,42 @@ export const compareQuarters = (kvartalFrom: string, kvartalTo: string): boolean
         return quarterFrom <= quarterTo;
     }
   }
+
+  const convertToCSV = (objArray: any) => {
+    const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+    let str = '';
+
+    let headerLine = '';
+    if (array.length > 0) {
+      headerLine = Object.keys(array[0]).join(',');
+      str += headerLine + '\r\n';
+    }
+
+    for (let i = 0; i < array.length; i++) {
+      let line = '';
+      for (let index in array[i]) {
+        if (line !== '') line += ',';
+
+        line += array[i][index];
+      }
+
+      str += line + '\r\n';
+    }
+
+    return str;
+  }
+
+  export const downloadCSV = (example: any) => {
+    const csvString = convertToCSV(example);
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'download.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+
+    link.click();
+    document.body.removeChild(link);
+  }
