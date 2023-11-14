@@ -1,3 +1,4 @@
+import { Boligtype } from "api/api";
 import { createContext } from "react";
 
 export interface IStettingsState {
@@ -26,7 +27,7 @@ export interface IHistoryList {
 
 export interface IAppContext {
     boligtype: string;
-    boligtypeList: string[];
+    boligtypeList: Boligtype[];
     kvartalFrom: string;
     kvartalTo: string;
     comment: string;

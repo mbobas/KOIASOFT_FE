@@ -82,6 +82,7 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       ctx?.setAppState({...ctx.appState, historyList: [historyRow]});
       setIsSaving(false);
     }
+    ctx?.setSettingsState((prev: any) => ({...prev, isHistoryNavOpen: true}));
   }
   
   const dataModel = {
