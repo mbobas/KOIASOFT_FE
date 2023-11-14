@@ -44,6 +44,7 @@ const HistoryList = styled.div`
   margin-top: 50px;
   width: 100%;
   margin-top: 50px;
+  margin-bottom: 50px;
 `;
 
 

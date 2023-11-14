@@ -72,12 +72,12 @@ function FilterPage() {
   const boligtype = ctx?.appState.boligtype;
   const kvartalFrom = ctx?.appState.kvartalFrom;
   const kvartalTo = ctx?.appState.kvartalTo;
-  
+  const comment = ctx?.appState.comment;
+
   const { register, handleSubmit } = useForm<IDataToQuery>()
   
   const [boligtypes, setBoligtypes] = useState<Boligtype[]>([{value: '', valueText: ''}]);
   const [kvartals, setKvartals] = useState<Kvartal[]>([{value: '', valueText: ''}]);
-  const [comment, setComment] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const [chartData, setChartData] = useState<number[]>([]);
@@ -118,7 +118,6 @@ function FilterPage() {
               setTimeout(() => {
                 setFetchingChartData(false);
               }, 3000);
-              // setFetchingChartData(false);
           }
       }
       const quarters = generateQuartersBetween(kvartalFrom, kvartalTo);
@@ -145,20 +144,19 @@ function FilterPage() {
   const handleChangeKvartalFrom = (event: any) => {
     const value = event.target.value;
     ctx?.setAppState({...ctx.appState, kvartalFrom: value});
-    // setKvartalFrom(value);
     onChangeSelect();
   }
 
   const handleChangeKvartalTo = (event: any) => {
     const value = event.target.value;
     ctx?.setAppState({...ctx.appState, kvartalTo: value});
-    // setKvartalTo(value);
     onChangeSelect();
   }
 
   const onChangeComment = (event: any) => {
     const value = event.target.value;
-    setComment(value);
+    // setComment(value);
+    ctx?.setAppState({...ctx.appState, comment: value});
     localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, value);
   }
 
@@ -188,14 +186,15 @@ function FilterPage() {
     const comment = params.get('comment');
     const run = params.get('run');
     if (boligtype && kvartalFrom && kvartalTo) {
-      ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo});
-      if (comment) {
-        setComment(comment);
-      }
+      ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment});
+      // if (comment) {
+      //   // setComment(comment);
+      //   ctx?.setAppState({...ctx.appState, comment: comment});
+      // }
       if (run == 'true') {
         setTimeout(() => {
           getDataRef.current?.click();
-          console.log('ruuuun')
+          // console.log('ruuuun')
         }, 3000);
       }
     } else if (localStorage.getItem('boligtype') && localStorage.getItem('kvartalFrom') && localStorage.getItem('kvartalTo')) {
@@ -204,17 +203,18 @@ function FilterPage() {
       const kvartalTo = localStorage.getItem('kvartalTo');
       const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
       if (boligtype && kvartalFrom && kvartalTo) {
-        ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo});
-        if (comment) {
-          setComment(comment);
-        }
+        ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment});
+        // if (comment) {
+        //   // setComment(comment);
+        //   ctx?.setAppState({...ctx.appState, comment: comment});
+        // }
       } 
     }
   }, []);
 
-  useEffect(() => {
-    console.log('chartData',chartData);
-  }, [chartData]);
+  // useEffect(() => {
+  //   // console.log('chartData',chartData);
+  // }, [chartData]);
 
   useEffect(() => {
 
@@ -231,7 +231,7 @@ function FilterPage() {
 
   useEffect(() => {
     if (ctx?.settingsState.isHistoryItemClicked) {
-      console.log('submit')
+      // console.log('submit')
       // handleSubmit(onSubmit);
       getDataRef.current?.click();
       ctx?.setSettingsState((prev: IStettingsState) => ({...prev, isHistoryItemClicked: false}));
@@ -326,7 +326,7 @@ function FilterPage() {
           { isChartVisible ?
           (<Box sx={{width: '80%', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <BarChart data={chartData} labels={quartersBetween} name={allData?.label ?? "" } 
-              isFetchingChartData={isFetchingChartData} comment={comment}
+              isFetchingChartData={isFetchingChartData} comment={comment ?? ''}
             />
           </Box>)
           : (null)
