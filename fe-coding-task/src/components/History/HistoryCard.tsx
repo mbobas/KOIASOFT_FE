@@ -6,7 +6,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import chart from 'assets/img/chart.jpeg';
-import { IHistoryList, appContext } from 'state/context';
+import { IAppContext, IHistoryList, IStettingsState, appContext } from 'state/context';
 import { Boligtype } from 'pages/FilterPage';
 import { useEffect } from 'react';
 
@@ -20,6 +20,20 @@ export default function HistoryCard({item}: IHistoryCardProps) {
     const {boligtype, kvartalFrom, kvartalTo, comment} = item;
     const ctx = React.useContext(appContext)
     const [boligTypeName, setBoligTypeName] = React.useState<string>('')
+
+    const onClickEdit = () => {
+        ctx?.setAppState((prev: IAppContext) => ({
+            ...prev,
+            boligtype: boligtype,
+            kvartalFrom: kvartalFrom,
+            kvartalTo: kvartalTo,
+            comment: comment
+        }))
+        ctx?.setSettingsState((prev: IStettingsState) => ({
+            ...prev,
+            isHistoryItemClicked: true
+        }))
+    }
 
     useEffect(() => {
         const bname = ctx?.settingsState?.boligtypeList?.find((item: Boligtype ) => item.value === boligtype)?.name;
@@ -44,7 +58,7 @@ export default function HistoryCard({item}: IHistoryCardProps) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Edit</Button>
+        <Button onClick={onClickEdit} size="small">Show</Button>
         <Button size="small">Share</Button>
       </CardActions>
     </Card>

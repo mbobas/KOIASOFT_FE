@@ -150,7 +150,6 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
           color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
             Download Chart Data *.csv
       </Button>
-      {downloadingMessage && <StyledSpan>{downloadingMessage}</StyledSpan>}
       </Box>
       <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         {isSaving ? (

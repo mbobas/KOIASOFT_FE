@@ -2,9 +2,11 @@ import { createContext } from "react";
 
 export interface IStettingsState {
     isHistoryNavOpen: boolean;
+    isHistoryItemClicked: boolean;
 }
 export const initialSettingsState: IStettingsState = {
     isHistoryNavOpen: false,
+    isHistoryItemClicked: false
 }
 
 export interface ContextProps {

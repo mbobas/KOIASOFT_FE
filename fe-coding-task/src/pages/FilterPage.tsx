@@ -77,20 +77,16 @@ function FilterPage() {
   
   const [boligtypes, setBoligtypes] = useState<Boligtype[]>([{value: '', valueText: ''}]);
   const [kvartals, setKvartals] = useState<Kvartal[]>([{value: '', valueText: ''}]);
-
-  // const [boligtype, setBoligtype] = useState<string>('');
-  // const [kvartalFrom, setKvartalFrom] = useState<string>('');
-  // const [kvartalTo, setKvartalTo] = useState<string>('');
   const [comment, setComment] = useState<string>('');
-
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
-
   const [chartData, setChartData] = useState<number[]>([]);
   const [quartersBetween, setQuartersBetween] = useState<string[]>([]);
   const [allData, setAllData] = useState<IApiResponse | null>(null);
   const [isChartVisible, setIsChartVisible] = useState<boolean>(false);
   const [isFetchingChartData, setFetchingChartData] = useState<boolean>(false);
+
+  const getDataRef = React.useRef<HTMLButtonElement>(null);
  
   const navigate = useNavigate();
 
@@ -222,6 +218,16 @@ function FilterPage() {
     }
   }, [boligtype , kvartalFrom, kvartalTo]);
 
+  useEffect(() => {
+    if (ctx?.settingsState.isHistoryItemClicked) {
+      console.log('submit')
+      // handleSubmit(onSubmit);
+      getDataRef.current?.click();
+      ctx?.setSettingsState((prev: IStettingsState) => ({...prev, isHistoryItemClicked: false}));
+    }
+  }, [ctx?.settingsState.isHistoryItemClicked]);
+
+
   return (
     <MainWrapper>
       {ctx?.settingsState.isHistoryNavOpen ? <History />: null}
@@ -291,6 +297,7 @@ function FilterPage() {
             </LoadingButton>
           ): (
             <Button 
+              ref={getDataRef}
               sx={{width: '100%', height: '56px'}} 
               color="success" variant="contained" onClick={handleSubmit(onSubmit)}>
                 Get Data
