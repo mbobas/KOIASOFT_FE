@@ -6,10 +6,10 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import chart from 'assets/img/chart.jpeg';
-import { IAppContext, IHistoryList, IStettingsState, appContext } from 'state/context';
-import { Boligtype } from 'pages/FilterPage';
+import { IAppContext, IStettingsState, appContext } from 'state/context';
 import { useEffect } from 'react';
 import { set } from 'react-hook-form';
+import { Boligtype, IHistoryList } from 'state/interfaces';
 
 interface IHistoryCardProps {
     item: IHistoryList

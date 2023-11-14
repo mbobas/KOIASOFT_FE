@@ -2,25 +2,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import styled from '@emotion/styled';
-import { Box, Button, ButtonGroup, Skeleton } from '@mui/material';
+import { Box, Button, Skeleton } from '@mui/material';
 import { downloadCSV } from 'utils/functions';
 import { appContext } from 'state/context';
 import { COLORS } from 'gloabls/colors';
 import { LoadingButton } from '@mui/lab';
-import { set } from 'react-hook-form';
-
-interface BarChartProps {
-  data: number[];
-  labels: Array<string>;
-  name: string;
-  isFetchingChartData: boolean;
-  comment: string;
-}
-
-interface DatatoDownload {
-  value: string;
-  quarter: string;
-}
+import { DatatoDownload } from 'state/interfaces';
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,11 +22,13 @@ const Wrapper = styled.div`
 const Title = styled.h3`
 `;
 
-const StyledSpan = styled.span`
-  color: ${COLORS.red};
-  font-size: 14px;
-  margin-top: 5px;
-`;
+export interface BarChartProps {
+  data: number[];
+  labels: Array<string>;
+  name: string;
+  isFetchingChartData: boolean;
+  comment: string;
+}
 
 const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartProps) => {
   const [dataToDownload, setDataToDownload] = useState<DatatoDownload[] | null>(null);
@@ -127,7 +116,6 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       },
     }
   };
-
 
   useEffect(() => {
     const dataToDownload = data.map((value, index) => {

@@ -1,5 +1,5 @@
-import { Boligtype } from "api/api";
 import { createContext } from "react";
+import { Boligtype, IHistoryList } from "state/interfaces";
 
 export interface IStettingsState {
     isHistoryNavOpen: boolean;
@@ -8,21 +8,6 @@ export interface IStettingsState {
 export const initialSettingsState: IStettingsState = {
     isHistoryNavOpen: false,
     isHistoryItemClicked: false
-}
-
-export interface ContextProps {
-    appState: IAppContext;
-    setAppState: any;
-    settingsState: any;
-    setSettingsState: any
-}
-
-export interface IHistoryList {
-    id: string
-    boligtype: string;
-    kvartalFrom: string;
-    kvartalTo: string;
-    comment: string;
 }
 
 export interface IAppContext {
@@ -41,6 +26,13 @@ export const initialMainState: IAppContext = {
     comment: '',
     historyList: [],
     boligtypeList: []
+}
+
+export interface ContextProps {
+    appState: IAppContext;
+    setAppState: any;
+    settingsState: any;
+    setSettingsState: any
 }
   
 export const appContext = createContext<ContextProps | null>(null);

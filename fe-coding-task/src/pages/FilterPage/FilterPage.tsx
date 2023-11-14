@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import 'App.css';
-import { IApiResponse, getVariables, postChartData } from 'api/api';
+import { getVariables, postChartData } from 'api/api';
 import { useForm, SubmitHandler, set } from "react-hook-form"
 import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
@@ -10,12 +10,13 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Button, Skeleton, TextField } from '@mui/material';
 import { compareQuarters, downloadCSV, generateQuartersBetween } from 'utils/functions';
-import BarChart from 'components/BarChart';
+import BarChart from 'components/BarChart/BarChart';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from 'react-router-dom';
 import History from 'components/History/History';
 import { COLORS } from 'gloabls/colors';
 import { IAppContext, IStettingsState, appContext } from 'state/context';
+import { Boligtype, IApiResponse, IDataToQuery, Kvartal } from 'state/interfaces';
 
 const MainWrapper = styled.div`
   display: flex;
@@ -49,24 +50,6 @@ const Message = styled.p`
 `;
 
 
-export interface Boligtype {
-  value: string;
-  valueText: string;
-}
-
-interface Kvartal {
-  value: string;
-  valueText: string;
-}
-
-interface IDataToQuery {
-  boligtype: Array<Boligtype>;
-  kvartalFrom: Array<Kvartal>;
-  kvartalTo: Array<Kvartal>;
-}
-
-
-
 function FilterPage() {
   const ctx = useContext(appContext);
   const boligtype = ctx?.appState.boligtype;
@@ -75,6 +58,8 @@ function FilterPage() {
   const comment = ctx?.appState.comment;
 
   const { register, handleSubmit } = useForm<IDataToQuery>()
+  const getDataRef = React.useRef<HTMLButtonElement>(null);
+  const navigate = useNavigate();
   
   const [boligtypes, setBoligtypes] = useState<Boligtype[]>([{value: '', valueText: ''}]);
   const [kvartals, setKvartals] = useState<Kvartal[]>([{value: '', valueText: ''}]);
@@ -86,31 +71,11 @@ function FilterPage() {
   const [isChartVisible, setIsChartVisible] = useState<boolean>(false);
   const [isFetchingChartData, setFetchingChartData] = useState<boolean>(false);
 
-  const getDataRef = React.useRef<HTMLButtonElement>(null);
- 
-  const navigate = useNavigate();
-
-  // const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string, comment?: string) => {
-  //   navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`);
-  //   localStorage.setItem('boligtype', boligtype);
-  //   localStorage.setItem('kvartalFrom', kvartalFrom);
-  //   localStorage.setItem('kvartalTo', kvartalTo);
-  //   localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, comment ?? '');
-  // };
   const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string, comment: string) => {
     navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`);
     localStorage.setItem('boligtype', boligtype);
     localStorage.setItem('kvartalFrom', kvartalFrom);
     localStorage.setItem('kvartalTo', kvartalTo);
-    // const isItHistoryCOmment = ctx?.appState.historyList.findIndex((item: any) => item.id === `comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
-    // console.log('isItHistoryCOmment', isItHistoryCOmment)
-    // if (ctx?.appState.historyList.findIndex((item: any) => item.id === `comment_${boligtype }_${kvartalFrom}_${kvartalTo}`) === -1) {
-    //   if (localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`) === null) {
-    //       localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, comment);
-    //     }
-    // }
-    // const com = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
-    // ctx?.setAppState({...ctx.appState, comment: com ?? ''});
   };
 
   const onSubmit: SubmitHandler<IDataToQuery> = () => {
@@ -171,10 +136,8 @@ function FilterPage() {
 
   const onChangeComment = (event: any) => {
     const value = event.target.value;
-    // setComment(value);
     ctx?.setAppState({...ctx.appState, comment: value});
     localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, value);
-    //update historyList if comment is changed
     const localHistory = localStorage.getItem('history');
     const historyList = localHistory ? JSON.parse(localHistory) : [];
     const existingIndex = historyList.findIndex((h: any) => h.id === `comment_${boligtype}_${kvartalFrom}_${kvartalTo}`);
@@ -183,7 +146,6 @@ function FilterPage() {
       localStorage.setItem('history', JSON.stringify(historyList));
       ctx?.setAppState({...ctx.appState, historyList: historyList, comment: value});
     }
-
   }
 
   useEffect(() => {
@@ -198,26 +160,16 @@ function FilterPage() {
       }
     }
     const localHisotryIsEmpty = localStorage.getItem('history');
-    console.log('localHisotryIsEmpty', localHisotryIsEmpty)
     if (!localHisotryIsEmpty) {
-      ctx?.setAppState((prev: IAppContext) => ({...prev, historyList: [
-        {
-          "id": "comment_03_2009K1_2011K1",
-          "boligtype": "03",
-          "kvartalFrom": "2009K1",
-          "kvartalTo": "2011K1",
-          "comment": "Hello, Here you can add or edit your comment"
+      const exampleItem = {
+        "id": "comment_03_2009K1_2011K1",
+        "boligtype": "03",
+        "kvartalFrom": "2009K1",
+        "kvartalTo": "2011K1",
+        "comment": "Hello, Here you can add or edit your comment"
       }
-      ]}));
-      localStorage.setItem('history', JSON.stringify([
-        {
-          "id": "comment_03_2009K1_2011K1",
-          "boligtype": "03",
-          "kvartalFrom": "2009K1",
-          "kvartalTo": "2011K1",
-          "comment": "Hello, Here is example of saved data"
-        }
-      ]));
+      ctx?.setAppState((prev: IAppContext) => ({...prev, historyList: [exampleItem]}));
+      localStorage.setItem('history', JSON.stringify([exampleItem]));
     }
     fetchVariables();
   }, []);
@@ -251,13 +203,6 @@ function FilterPage() {
     }
   }, []);
 
-
-  // useEffect(() => {
-    
-  //   updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '', comment ?? '');
-
-  // }, [boligtype , kvartalFrom, kvartalTo, comment]);
-
   useEffect(() => {
     updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '', comment ?? '');
     if (boligtype && kvartalFrom && kvartalTo) {
@@ -276,8 +221,6 @@ function FilterPage() {
 
   useEffect(() => {
     if (ctx?.settingsState.isHistoryItemClicked) {
-      // console.log('submit')
-      // handleSubmit(onSubmit);
       getDataRef.current?.click();
       ctx?.setSettingsState((prev: IStettingsState) => ({...prev, isHistoryItemClicked: false}));
     }
@@ -376,7 +319,6 @@ function FilterPage() {
           </Box>)
           : (null)
           }
-            
         </Wrapper>
       ) : 
       (

@@ -12,8 +12,9 @@ import { Card } from '@mui/material';
 import HistoryCard from './HistoryCard';
 import { ReactComponent as CloseButton } from 'assets/svg/closeButton.svg';
 import { useContext, useEffect } from 'react';
-import { IAppContext, IHistoryList, appContext } from 'state/context';
+import { IAppContext, appContext } from 'state/context';
 import { set } from 'react-hook-form';
+import { IHistoryList } from 'state/interfaces';
 
 const Wrapper = styled.div`
     position: fixed;
