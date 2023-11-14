@@ -9,6 +9,8 @@ import chart from 'assets/img/chart.jpeg';
 import { IAppContext, IStettingsState, appContext } from 'state/context';
 import { useEffect } from 'react';
 import { Boligtype, IHistoryList } from 'state/interfaces';
+import { Tooltip } from '@mui/material';
+import { set } from 'react-hook-form';
 
 interface IHistoryCardProps {
   item: IHistoryList
@@ -18,6 +20,7 @@ export default function HistoryCard({ item }: IHistoryCardProps) {
   const { boligtype, kvartalFrom, kvartalTo, comment, id } = item;
   const ctx = React.useContext(appContext)
   const [boligTypeName, setBoligTypeName] = React.useState<any>('')
+  const [shareMsg, setShareMsg] = React.useState<string>('Copy link')
 
   const onClickEdit = () => {
     ctx?.setAppState((prev: IAppContext) => ({
@@ -46,8 +49,13 @@ export default function HistoryCard({ item }: IHistoryCardProps) {
 
   const onShareLink = () => {
     const baseUrl = window.location.origin
-    const url = `${baseUrl}/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}&run=true`
+    const encodedComment = encodeURIComponent(comment);
+    const url = `${baseUrl}/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${encodedComment}&run=true`
     navigator.clipboard.writeText(url)
+    setShareMsg('Link copied')
+    setTimeout(() => {
+      setShareMsg('Copy link');
+    }, 1000);
   }
 
   useEffect(() => {
@@ -75,7 +83,9 @@ export default function HistoryCard({ item }: IHistoryCardProps) {
       </CardContent>
       <CardActions>
         <Button onClick={onClickEdit} size="small">Edit</Button>
-        <Button onClick={onShareLink} size="small">Share</Button>
+        <Tooltip title={shareMsg}>
+          <Button onClick={onShareLink} size="small">SHARE</Button>
+        </Tooltip>
         <Button onClick={onRemoveItem} size="small">Delete</Button>
       </CardActions>
     </Card>
