@@ -13,20 +13,24 @@ import { compareQuarters, downloadCSV, generateQuartersBetween } from 'utils/fun
 import BarChart from 'components/BarChart';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from 'react-router-dom';
+import History from 'components/History/History';
+import { COLORS } from 'gloabls/colors';
 
 const MainWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
+  min-width : 100vw;
+  background-color: ${COLORS.lightGrey};
 `
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  width : 100vw;
+  height: 100%;
   margin-bottom: 100px;
 `
 
@@ -42,6 +46,7 @@ const Message = styled.p`
   justify-content: center;
   align-items: center;
 `;
+
 
 interface Boligtype {
   value: string;
@@ -206,110 +211,111 @@ function FilterPage() {
 
   return (
     <MainWrapper>
-    {isLoaded ? (
-      <Wrapper>
-        <Box sx={{ minWidth: 400, marginBottom: 10}}>
-          <FormControl fullWidth>
-            <StyledInputLabel id="input-boligtype-label">Boligtype</StyledInputLabel>
-            <Select
-              sx={{ marginBottom: 4}}
-              {...register("boligtype")}
-              labelId='input-boligtype-label'
-              id="demo-simple-select"
-              value={boligtype}
-              label="Boligtype"
-              onChange={handleChangeBoligtype}
-            >
-              {boligtypes.map((boligtype: Boligtype) => (
-                <MenuItem key={boligtype.value} value={boligtype.value}>
-                  {boligtype.valueText}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <StyledInputLabel id="input-kvartalFrom-label">KvartalFrom</StyledInputLabel>
-            <Select
-              sx={{ marginBottom: 4}}
-              {...register("kvartalFrom")}
-              labelId='input-kvartalFrom-label'
-              id="input-kvartalFrom"
-              value={kvartalFrom}
-              label="Kvartal From"
-              onChange={handleChangeKvartalFrom}
-            >
-              {kvartals.map((kvartal: Kvartal) => (
-                <MenuItem key={kvartal.value} value={kvartal.value}>
-                  {kvartal.valueText}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <StyledInputLabel id="input-kvartalTo-label">KvartalTo</StyledInputLabel>
-            <Select
-              sx={{ marginBottom: 4}}
-              {...register("kvartalTo")}
-              labelId='input-kvartalTo-label'
-              id="input-kvartalTo"
-              value={kvartalTo}
-              label="Kvartal To"
-              onChange={handleChangeKvartalTo}
-            >
-              {kvartals.map((kvartal: Kvartal) => (
-                <MenuItem key={kvartal.value} value={kvartal.value}>
-                  {kvartal.valueText}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {message && <Message>{message}</Message>}
-         { isFetchingChartData ? (
-          <LoadingButton loading 
-            sx={{width: '100%', height: '56px'}} 
-            color="success" variant="outlined">
-              Get Data
-          </LoadingButton>
-         ): (
-          <Button 
-            sx={{width: '100%', height: '56px'}} 
-            color="success" variant="outlined" onClick={handleSubmit(onSubmit)}>
-              Get Data
-          </Button>
-         )}
-        </Box>
-        <TextField 
-            multiline
-            id="outlined-basic" label="Comment" variant="outlined" 
-            sx={{width: 500, height: 200}}
-            value={comment}
-            onChange={onChangeComment}
-          />
-        { isChartVisible ?
-        (<Box sx={{width: '80%', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <BarChart data={chartData} labels={quartersBetween} name={allData?.label ?? "" } 
-            isFetchingChartData={isFetchingChartData} comment={comment}
-          />
-        </Box>)
-        : (null)
-        }
-          
-      </Wrapper>
-    ) : 
-    (
-      <Wrapper>
-        <Box sx={{width: 400, display: 'felx', justifyContent: 'center', alignItems: 'center'}}>
-        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-        <Skeleton variant="rectangular" width={400} height={60} />
-        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-        <Skeleton variant="rectangular" width={400} height={60} />
-        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-        <Skeleton variant="rectangular" width={400} height={60} />
-        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-        <Skeleton variant="rectangular" width={400} height={60} />
-        </Box>
-      </Wrapper>
-    )}
+      <History />
+      {isLoaded ? (
+        <Wrapper>
+          <Box sx={{ minWidth: 400, marginBottom: 10, marginTop: 12}}>
+            <FormControl fullWidth>
+              <StyledInputLabel id="input-boligtype-label">Boligtype</StyledInputLabel>
+              <Select
+                sx={{ marginBottom: 4}}
+                {...register("boligtype")}
+                labelId='input-boligtype-label'
+                id="demo-simple-select"
+                value={boligtype}
+                label="Boligtype"
+                onChange={handleChangeBoligtype}
+              >
+                {boligtypes.map((boligtype: Boligtype) => (
+                  <MenuItem key={boligtype.value} value={boligtype.value}>
+                    {boligtype.valueText}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <StyledInputLabel id="input-kvartalFrom-label">KvartalFrom</StyledInputLabel>
+              <Select
+                sx={{ marginBottom: 4}}
+                {...register("kvartalFrom")}
+                labelId='input-kvartalFrom-label'
+                id="input-kvartalFrom"
+                value={kvartalFrom}
+                label="Kvartal From"
+                onChange={handleChangeKvartalFrom}
+              >
+                {kvartals.map((kvartal: Kvartal) => (
+                  <MenuItem key={kvartal.value} value={kvartal.value}>
+                    {kvartal.valueText}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <StyledInputLabel id="input-kvartalTo-label">KvartalTo</StyledInputLabel>
+              <Select
+                sx={{ marginBottom: 4}}
+                {...register("kvartalTo")}
+                labelId='input-kvartalTo-label'
+                id="input-kvartalTo"
+                value={kvartalTo}
+                label="Kvartal To"
+                onChange={handleChangeKvartalTo}
+              >
+                {kvartals.map((kvartal: Kvartal) => (
+                  <MenuItem key={kvartal.value} value={kvartal.value}>
+                    {kvartal.valueText}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {message && <Message>{message}</Message>}
+          { isFetchingChartData ? (
+            <LoadingButton loading 
+              sx={{width: '100%', height: '56px'}} 
+              color="success" variant="outlined">
+                Get Data
+            </LoadingButton>
+          ): (
+            <Button 
+              sx={{width: '100%', height: '56px'}} 
+              color="success" variant="outlined" onClick={handleSubmit(onSubmit)}>
+                Get Data
+            </Button>
+          )}
+          </Box>
+          <TextField 
+              multiline
+              id="outlined-basic" label="Comment" variant="outlined" 
+              sx={{width: 500, height: 200}}
+              value={comment}
+              onChange={onChangeComment}
+            />
+          { isChartVisible ?
+          (<Box sx={{width: '80%', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <BarChart data={chartData} labels={quartersBetween} name={allData?.label ?? "" } 
+              isFetchingChartData={isFetchingChartData} comment={comment}
+            />
+          </Box>)
+          : (null)
+          }
+            
+        </Wrapper>
+      ) : 
+      (
+        <Wrapper>
+          <Box sx={{width: 400, display: 'felx', justifyContent: 'center', alignItems: 'center'}}>
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+          </Box>
+        </Wrapper>
+      )}
     </MainWrapper> 
   )
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import styled from '@emotion/styled';
-import { Button, Skeleton } from '@mui/material';
+import { Box, Button, ButtonGroup, Skeleton } from '@mui/material';
 import { downloadCSV } from 'utils/functions';
 
 interface BarChartProps {
@@ -23,6 +23,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 800px;
+  height: 400px;
 `
 const Title = styled.h3`
   margin-top: 200px;
@@ -96,12 +98,19 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
    ) : (
     <Wrapper>
     <Title>{name}</Title>
-    <Button 
-        sx={{width: 400, height: '56px'}} 
-        color="error" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
-          Download Chart Data *.csv
-    </Button>
     <Bar data={dataModel} options={options} />
+    <Box sx={{marginTop: 4, height: 100, width: 900, display: "flex", justifyContent: "space-between" }}>
+      <Button 
+          sx={{width: 400, height: '56px'}} 
+          color="error" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
+            Download Chart Data *.csv
+      </Button>
+      <Button 
+          sx={{width: 400, height: '56px'}} 
+          color="error" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
+            Save data in history
+      </Button>
+    </Box>
   </Wrapper>
    )}
    </>
