@@ -90,12 +90,27 @@ function FilterPage() {
  
   const navigate = useNavigate();
 
-  const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string, comment?: string) => {
+  // const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string, comment?: string) => {
+  //   navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`);
+  //   localStorage.setItem('boligtype', boligtype);
+  //   localStorage.setItem('kvartalFrom', kvartalFrom);
+  //   localStorage.setItem('kvartalTo', kvartalTo);
+  //   localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, comment ?? '');
+  // };
+  const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string, comment: string) => {
     navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`);
     localStorage.setItem('boligtype', boligtype);
     localStorage.setItem('kvartalFrom', kvartalFrom);
     localStorage.setItem('kvartalTo', kvartalTo);
-    localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, comment ?? '');
+    // const isItHistoryCOmment = ctx?.appState.historyList.findIndex((item: any) => item.id === `comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
+    // console.log('isItHistoryCOmment', isItHistoryCOmment)
+    // if (ctx?.appState.historyList.findIndex((item: any) => item.id === `comment_${boligtype }_${kvartalFrom}_${kvartalTo}`) === -1) {
+    //   if (localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`) === null) {
+    //       localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, comment);
+    //     }
+    // }
+    // const com = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
+    // ctx?.setAppState({...ctx.appState, comment: com ?? ''});
   };
 
   const onSubmit: SubmitHandler<IDataToQuery> = () => {
@@ -133,6 +148,7 @@ function FilterPage() {
     setChartData([]);
     setQuartersBetween([]);
     setIsChartVisible(false);
+    setMessage('');
   }
 
   const handleChangeBoligtype = (event: any) => {
@@ -158,6 +174,16 @@ function FilterPage() {
     // setComment(value);
     ctx?.setAppState({...ctx.appState, comment: value});
     localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, value);
+    //update historyList if comment is changed
+    const localHistory = localStorage.getItem('history');
+    const historyList = localHistory ? JSON.parse(localHistory) : [];
+    const existingIndex = historyList.findIndex((h: any) => h.id === `comment_${boligtype}_${kvartalFrom}_${kvartalTo}`);
+    if (existingIndex !== -1) {
+      historyList[existingIndex].comment = value;
+      localStorage.setItem('history', JSON.stringify(historyList));
+      ctx?.setAppState({...ctx.appState, historyList: historyList, comment: value});
+    }
+
   }
 
   useEffect(() => {
@@ -170,6 +196,28 @@ function FilterPage() {
           setIsLoaded(true);
         }, 2000);
       }
+    }
+    const localHisotryIsEmpty = localStorage.getItem('history');
+    console.log('localHisotryIsEmpty', localHisotryIsEmpty)
+    if (!localHisotryIsEmpty) {
+      ctx?.setAppState((prev: IAppContext) => ({...prev, historyList: [
+        {
+          "id": "comment_03_2009K1_2011K1",
+          "boligtype": "03",
+          "kvartalFrom": "2009K1",
+          "kvartalTo": "2011K1",
+          "comment": "Hello, Here you can add or edit your comment"
+      }
+      ]}));
+      localStorage.setItem('history', JSON.stringify([
+        {
+          "id": "comment_03_2009K1_2011K1",
+          "boligtype": "03",
+          "kvartalFrom": "2009K1",
+          "kvartalTo": "2011K1",
+          "comment": "Hello, Here is example of saved data"
+        }
+      ]));
     }
     fetchVariables();
   }, []);
@@ -187,14 +235,9 @@ function FilterPage() {
     const run = params.get('run');
     if (boligtype && kvartalFrom && kvartalTo) {
       ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment});
-      // if (comment) {
-      //   // setComment(comment);
-      //   ctx?.setAppState({...ctx.appState, comment: comment});
-      // }
       if (run == 'true') {
         setTimeout(() => {
           getDataRef.current?.click();
-          // console.log('ruuuun')
         }, 3000);
       }
     } else if (localStorage.getItem('boligtype') && localStorage.getItem('kvartalFrom') && localStorage.getItem('kvartalTo')) {
@@ -204,30 +247,32 @@ function FilterPage() {
       const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
       if (boligtype && kvartalFrom && kvartalTo) {
         ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment});
-        // if (comment) {
-        //   // setComment(comment);
-        //   ctx?.setAppState({...ctx.appState, comment: comment});
-        // }
       } 
     }
   }, []);
 
+
   // useEffect(() => {
-  //   // console.log('chartData',chartData);
-  // }, [chartData]);
+    
+  //   updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '', comment ?? '');
+
+  // }, [boligtype , kvartalFrom, kvartalTo, comment]);
 
   useEffect(() => {
-
     updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '', comment ?? '');
-    // if (localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`)) {
-    //   const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
-    //   if (comment) {
-    //     setComment(comment);
-    //   }
-    // }  else {
-    //   setComment('');
-    // }
-  }, [boligtype , kvartalFrom, kvartalTo, comment]);
+    if (boligtype && kvartalFrom && kvartalTo) {
+      const localCom = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
+      const params = new URLSearchParams(window.location.search);
+      const externalCom = params.get('comment');
+      if (localCom && externalCom && (localCom !== externalCom)) {
+        ctx?.setAppState((prev: IAppContext) => ({...prev, comment: "***You LocalStorageComment\n"+ localCom+"\n***Comment from external url:\n"+externalCom}));
+      } else if (localCom) {
+        ctx?.setAppState((prev: IAppContext) => ({...prev, comment: localCom}));
+      } else if (externalCom) {
+        ctx?.setAppState((prev: IAppContext) => ({...prev, comment: externalCom}));
+      }
+      }
+  }, [boligtype , kvartalFrom, kvartalTo]);
 
   useEffect(() => {
     if (ctx?.settingsState.isHistoryItemClicked) {
@@ -244,7 +289,7 @@ function FilterPage() {
       {ctx?.settingsState.isHistoryNavOpen ? <History />: null}
       {isLoaded ? (
         <Wrapper>
-          <Box sx={{ minWidth: 400, marginBottom: 10, marginTop: 12}}>
+          <Box sx={{ width: 400, marginBottom: 10, marginTop: 12}}>
             <FormControl fullWidth>
               <StyledInputLabel id="input-boligtype-label">Boligtype</StyledInputLabel>
               <Select

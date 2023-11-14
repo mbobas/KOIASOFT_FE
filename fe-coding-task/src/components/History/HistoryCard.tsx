@@ -79,7 +79,7 @@ export default function HistoryCard({item}: IHistoryCardProps) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button onClick={onClickEdit} size="small">Show</Button>
+        <Button onClick={onClickEdit} size="small">Edit</Button>
         <Button onClick={onShareLink} size="small">Share</Button>
         <Button onClick={onRemoveItem} size="small">Delete</Button>
       </CardActions>

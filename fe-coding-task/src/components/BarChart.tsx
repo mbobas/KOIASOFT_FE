@@ -48,7 +48,7 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
   const kvartalFrom = ctx?.appState.kvartalFrom;
   const kvartalTo = ctx?.appState.kvartalTo;
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [savingMessage, setSavingMessage] = useState<string>('');
+  const [savingMessage, setSavingMessage] = useState<string>('Add data to history');
 
   const onSaveData = () => {
     setIsSaving(true);
@@ -67,11 +67,11 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       
       if (existingIndex !== -1) {
         parsedLocalHistory[existingIndex] = historyRow;
-        setSavingMessage('Data updated successfully');
+        setSavingMessage('Data updated');
 
       } else {
         parsedLocalHistory.push(historyRow);
-        setSavingMessage('Data saved successfully');
+        setSavingMessage('Data saved');
       }
 
       localStorage.setItem('history', JSON.stringify(parsedLocalHistory));
@@ -83,6 +83,9 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       setIsSaving(false);
     }
     ctx?.setSettingsState((prev: any) => ({...prev, isHistoryNavOpen: true}));
+    setTimeout(() => {
+      setSavingMessage('Add data to history');
+    }, 2000);
   }
   
   const dataModel = {
@@ -149,7 +152,7 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       <Button 
           sx={{width: 250, height: '56px'}} 
           color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
-            Download Chart Data *.csv
+            Download Chart *.csv
       </Button>
       </Box>
       <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
@@ -164,9 +167,8 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
             <Button 
               sx={{width: 250, height: '56px'}} 
               color="success" variant="outlined" onClick={onSaveData}>
-                Save data in history
+                {savingMessage}
             </Button>
-            {savingMessage && <StyledSpan>{savingMessage}</StyledSpan>}
            </>
         )}
       </Box>
