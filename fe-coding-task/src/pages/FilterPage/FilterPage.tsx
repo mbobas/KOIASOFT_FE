@@ -17,6 +17,24 @@ import History from 'components/History/History';
 import { COLORS } from 'gloabls/colors';
 import { IAppContext, IStettingsState, appContext } from 'state/context';
 import { Boligtype, IApiResponse, IDataToQuery, Kvartal } from 'state/interfaces';
+import { Filter } from '@mui/icons-material';
+import FilterSkeleton from 'pages/FilterPage/FilterSkeleton';
+
+const FilterSkeleton2 = () => {
+  return (
+      <Box sx={{ width: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+          <Skeleton variant="rectangular" width={400} height={60} />
+      </Box>
+  );
+}
+
 
 const MainWrapper = styled.div`
   display: flex;
@@ -322,18 +340,7 @@ function FilterPage() {
         </Wrapper>
       ) : 
       (
-        <Wrapper>
-          <Box sx={{width: 400, display: 'felx', justifyContent: 'center', alignItems: 'center'}}>
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-          </Box>
-        </Wrapper>
+         <FilterSkeleton />
       )}
     </MainWrapper> 
   )
