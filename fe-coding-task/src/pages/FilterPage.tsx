@@ -289,8 +289,9 @@ function FilterPage() {
           </Box>
           <TextField 
               multiline
-              id="outlined-basic" label="Comment" variant="outlined" 
-              sx={{width: 500, height: 200}}
+              rows={4}
+              id="outlined-basic" label="Add Comment" variant="outlined" 
+              sx={{width: 600, maxHeight: 200}}
               value={comment}
               onChange={onChangeComment}
             />

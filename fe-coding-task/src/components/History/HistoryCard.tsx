@@ -17,10 +17,10 @@ export default function HistoryCard() {
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">
-          2010K1 - 2021K2
+          2010K1 - 2021K2 - Boligtype
         </Typography>
         <Typography variant="body2" color="text.secondary">
-         Comment Comment Comment
+            Comment Comment Comment
         </Typography>
       </CardContent>
       <CardActions>

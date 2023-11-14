@@ -25,9 +25,10 @@ const Wrapper = styled.div`
   justify-content: center;
   width: 800px;
   height: 400px;
+  margin-top: 300px;
+  margin-bottom: 200px;
 `
 const Title = styled.h3`
-  margin-top: 200px;
 `;
 
 const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartProps) => {
@@ -73,11 +74,6 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
     }
   };
 
-    const example = [
-    { boligtype: "02", kvartalFrom: "2011K1" },
-    { boligtype: "02", kvartalFrom: "2011K1" },
-    { boligtype: "02", kvartalFrom: "2011K1" }
-  ];
 
   useEffect(() => {
     const dataToDownload = data.map((value, index) => {
@@ -97,20 +93,20 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
     </Wrapper>
    ) : (
     <Wrapper>
-    <Title>{name}</Title>
-    <Bar data={dataModel} options={options} />
-    <Box sx={{marginTop: 4, height: 100, width: 900, display: "flex", justifyContent: "space-between" }}>
+    <Box sx={{marginTop: 4, height: 100, width: 600, display: "flex", justifyContent: "space-between" }}>
       <Button 
-          sx={{width: 400, height: '56px'}} 
+          sx={{width: 250, height: '56px'}} 
           color="error" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
             Download Chart Data *.csv
       </Button>
       <Button 
-          sx={{width: 400, height: '56px'}} 
+          sx={{width: 250, height: '56px'}} 
           color="error" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
             Save data in history
       </Button>
     </Box>
+      <Title>{name}</Title>
+      <Bar data={dataModel} options={options} />
   </Wrapper>
    )}
    </>

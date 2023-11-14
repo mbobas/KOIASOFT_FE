@@ -19,7 +19,6 @@ export interface IAppContext {
     kvartalFrom: string;
     kvartalTo: string;
     comment: string;
-
    }
   
 export const initialMainState: IAppContext = {
