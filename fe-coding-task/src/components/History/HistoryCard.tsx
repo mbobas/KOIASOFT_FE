@@ -8,60 +8,55 @@ import Typography from '@mui/material/Typography';
 import chart from 'assets/img/chart.jpeg';
 import { IAppContext, IStettingsState, appContext } from 'state/context';
 import { useEffect } from 'react';
-import { set } from 'react-hook-form';
 import { Boligtype, IHistoryList } from 'state/interfaces';
 
 interface IHistoryCardProps {
-    item: IHistoryList
+  item: IHistoryList
 }
 
-export default function HistoryCard({item}: IHistoryCardProps) {
-    const {boligtype, kvartalFrom, kvartalTo, comment, id} = item;
-    const ctx = React.useContext(appContext)
-    const [boligTypeName, setBoligTypeName] = React.useState<any>('')
+export default function HistoryCard({ item }: IHistoryCardProps) {
+  const { boligtype, kvartalFrom, kvartalTo, comment, id } = item;
+  const ctx = React.useContext(appContext)
+  const [boligTypeName, setBoligTypeName] = React.useState<any>('')
 
-    const onClickEdit = () => {
-        ctx?.setAppState((prev: IAppContext) => ({
-            ...prev,
-            boligtype: boligtype,
-            kvartalFrom: kvartalFrom,
-            kvartalTo: kvartalTo,
-            comment: comment
-        }))
-        ctx?.setSettingsState((prev: IStettingsState) => ({
-            ...prev,
-            isHistoryItemClicked: true
-        }))
-    }
+  const onClickEdit = () => {
+    ctx?.setAppState((prev: IAppContext) => ({
+      ...prev,
+      boligtype: boligtype,
+      kvartalFrom: kvartalFrom,
+      kvartalTo: kvartalTo,
+      comment: comment
+    }))
+    ctx?.setSettingsState((prev: IStettingsState) => ({
+      ...prev,
+      isHistoryItemClicked: true
+    }))
+  }
 
-    const onRemoveItem = () => {
-        const localHistory = localStorage.getItem('history');
-        console.log('localHistory', localHistory)
-        const historyList = localHistory ? JSON.parse(localHistory) : [];
-        console.log('historyList', historyList)
-        const newHistoryList = historyList.filter((item: IHistoryList) => item.id !== id)
-        console.log('newHistoryList', newHistoryList)
-        localStorage.setItem('history', JSON.stringify(newHistoryList))
-        ctx?.setAppState((prev: IAppContext) => ({
-            ...prev,
-            historyList: newHistoryList
-        }))
-    }
+  const onRemoveItem = () => {
+    const localHistory = localStorage.getItem('history');
+    const historyList = localHistory ? JSON.parse(localHistory) : [];
+    const newHistoryList = historyList.filter((item: IHistoryList) => item.id !== id)
+    localStorage.setItem('history', JSON.stringify(newHistoryList))
+    ctx?.setAppState((prev: IAppContext) => ({
+      ...prev,
+      historyList: newHistoryList
+    }))
+  }
 
-    const onShareLink = () => {
-          const baseUrl = window.location.origin
-          const url = `${baseUrl}/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}&run=true`
-          navigator.clipboard.writeText(url)
+  const onShareLink = () => {
+    const baseUrl = window.location.origin
+    const url = `${baseUrl}/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}&run=true`
+    navigator.clipboard.writeText(url)
+  }
 
-        }
+  useEffect(() => {
+    if (!ctx?.appState.boligtypeList) return;
+    const bname: Boligtype[] | undefined = ctx?.appState?.boligtypeList
+      .filter((item: Boligtype) => item.value === boligtype)
 
-    useEffect(() => {
-      if (!ctx?.appState.boligtypeList) return;
-      const bname: Boligtype[] | undefined = ctx?.appState?.boligtypeList
-        .filter((item: Boligtype) => item.value === boligtype)
-      
-      setBoligTypeName(bname[0].valueText)
-    }, [ctx?.appState.boligtypeList])
+    setBoligTypeName(bname[0].valueText)
+  }, [ctx?.appState.boligtypeList])
 
   return (
     <Card sx={{ width: "80%", marginBottom: 2 }}>
@@ -75,7 +70,7 @@ export default function HistoryCard({item}: IHistoryCardProps) {
           {kvartalFrom} - {kvartalTo} - {boligTypeName}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-            {comment}
+          {comment}
         </Typography>
       </CardContent>
       <CardActions>

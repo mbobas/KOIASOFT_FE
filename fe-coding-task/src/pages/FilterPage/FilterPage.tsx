@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import 'App.css';
 import { getVariables, postChartData } from 'api/api';
-import { useForm, SubmitHandler, set } from "react-hook-form"
+import { useForm, SubmitHandler } from "react-hook-form"
 import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Button, Skeleton, TextField } from '@mui/material';
-import { compareQuarters, downloadCSV, generateQuartersBetween } from 'utils/functions';
+import Select from '@mui/material/Select';
+import { Button, TextField } from '@mui/material';
+import { compareQuarters, generateQuartersBetween } from 'utils/functions';
 import BarChart from 'components/BarChart/BarChart';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from 'react-router-dom';
@@ -17,24 +17,7 @@ import History from 'components/History/History';
 import { COLORS } from 'gloabls/colors';
 import { IAppContext, IStettingsState, appContext } from 'state/context';
 import { Boligtype, IApiResponse, IDataToQuery, Kvartal } from 'state/interfaces';
-import { Filter } from '@mui/icons-material';
 import FilterSkeleton from 'pages/FilterPage/FilterSkeleton';
-
-const FilterSkeleton2 = () => {
-  return (
-      <Box sx={{ width: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          <Skeleton variant="rectangular" width={400} height={60} />
-      </Box>
-  );
-}
-
 
 const MainWrapper = styled.div`
   display: flex;
@@ -78,9 +61,9 @@ function FilterPage() {
   const { register, handleSubmit } = useForm<IDataToQuery>()
   const getDataRef = React.useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
-  
-  const [boligtypes, setBoligtypes] = useState<Boligtype[]>([{value: '', valueText: ''}]);
-  const [kvartals, setKvartals] = useState<Kvartal[]>([{value: '', valueText: ''}]);
+
+  const [boligtypes, setBoligtypes] = useState<Boligtype[]>([{ value: '', valueText: '' }]);
+  const [kvartals, setKvartals] = useState<Kvartal[]>([{ value: '', valueText: '' }]);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const [chartData, setChartData] = useState<number[]>([]);
@@ -89,7 +72,7 @@ function FilterPage() {
   const [isChartVisible, setIsChartVisible] = useState<boolean>(false);
   const [isFetchingChartData, setFetchingChartData] = useState<boolean>(false);
 
-  const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string, comment: string) => {
+  const updateUrlAndLocalStorage = (boligtype: string, kvartalFrom: string, kvartalTo: string, comment: string) => {
     navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`);
     localStorage.setItem('boligtype', boligtype);
     localStorage.setItem('kvartalFrom', kvartalFrom);
@@ -106,26 +89,26 @@ function FilterPage() {
     const isValidKvartals = compareQuarters(kvartalFrom, kvartalTo)
     if (isValidKvartals) {
       setMessage('');
-      const fetchChartData = async (boligtype: string, quarters:string[]) => {
+      const fetchChartData = async (boligtype: string, quarters: string[]) => {
         const chartData = await postChartData(boligtype, quarters);
-          if (chartData) {
-              setAllData(chartData)
-              setChartData(chartData.value);
-              setQuartersBetween(quarters);
-              setIsChartVisible(true);
-              setTimeout(() => {
-                setFetchingChartData(false);
-              }, 3000);
-          }
+        if (chartData) {
+          setAllData(chartData)
+          setChartData(chartData.value);
+          setQuartersBetween(quarters);
+          setIsChartVisible(true);
+          setTimeout(() => {
+            setFetchingChartData(false);
+          }, 3000);
+        }
       }
       const quarters = generateQuartersBetween(kvartalFrom, kvartalTo);
-      fetchChartData(boligtype , quarters);
+      fetchChartData(boligtype, quarters);
     } else {
       setMessage('KvartalFrom must be smaller than KvartalTo or equal');
       setFetchingChartData(false);
     }
   }
-  
+
   const onChangeSelect = () => {
     setAllData(null);
     setChartData([]);
@@ -136,33 +119,33 @@ function FilterPage() {
 
   const handleChangeBoligtype = (event: any) => {
     const value = event.target.value;
-    ctx?.setAppState({...ctx.appState, boligtype: value});
+    ctx?.setAppState({ ...ctx.appState, boligtype: value });
     onChangeSelect();
   }
 
   const handleChangeKvartalFrom = (event: any) => {
     const value = event.target.value;
-    ctx?.setAppState({...ctx.appState, kvartalFrom: value});
+    ctx?.setAppState({ ...ctx.appState, kvartalFrom: value });
     onChangeSelect();
   }
 
   const handleChangeKvartalTo = (event: any) => {
     const value = event.target.value;
-    ctx?.setAppState({...ctx.appState, kvartalTo: value});
+    ctx?.setAppState({ ...ctx.appState, kvartalTo: value });
     onChangeSelect();
   }
 
   const onChangeComment = (event: any) => {
     const value = event.target.value;
-    ctx?.setAppState({...ctx.appState, comment: value});
-    localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, value);
+    ctx?.setAppState({ ...ctx.appState, comment: value });
+    localStorage.setItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`, value);
     const localHistory = localStorage.getItem('history');
     const historyList = localHistory ? JSON.parse(localHistory) : [];
     const existingIndex = historyList.findIndex((h: any) => h.id === `comment_${boligtype}_${kvartalFrom}_${kvartalTo}`);
     if (existingIndex !== -1) {
       historyList[existingIndex].comment = value;
       localStorage.setItem('history', JSON.stringify(historyList));
-      ctx?.setAppState({...ctx.appState, historyList: historyList, comment: value});
+      ctx?.setAppState({ ...ctx.appState, historyList: historyList, comment: value });
     }
   }
 
@@ -186,14 +169,14 @@ function FilterPage() {
         "kvartalTo": "2011K1",
         "comment": "Hello, Here you can add or edit your comment"
       }
-      ctx?.setAppState((prev: IAppContext) => ({...prev, historyList: [exampleItem]}));
+      ctx?.setAppState((prev: IAppContext) => ({ ...prev, historyList: [exampleItem] }));
       localStorage.setItem('history', JSON.stringify([exampleItem]));
     }
     fetchVariables();
   }, []);
 
   useEffect(() => {
-    ctx?.setAppState((prev: IAppContext) => ({...prev, boligtypeList: boligtypes}));
+    ctx?.setAppState((prev: IAppContext) => ({ ...prev, boligtypeList: boligtypes }));
   }, [boligtypes]);
 
   useEffect(() => {
@@ -204,7 +187,7 @@ function FilterPage() {
     const comment = params.get('comment');
     const run = params.get('run');
     if (boligtype && kvartalFrom && kvartalTo) {
-      ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment});
+      ctx?.setAppState({ ...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment });
       if (run == 'true') {
         setTimeout(() => {
           getDataRef.current?.click();
@@ -214,47 +197,47 @@ function FilterPage() {
       const boligtype = localStorage.getItem('boligtype');
       const kvartalFrom = localStorage.getItem('kvartalFrom');
       const kvartalTo = localStorage.getItem('kvartalTo');
-      const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
+      const comment = localStorage.getItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`);
       if (boligtype && kvartalFrom && kvartalTo) {
-        ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment});
-      } 
+        ctx?.setAppState({ ...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment });
+      }
     }
   }, []);
 
   useEffect(() => {
     updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '', comment ?? '');
     if (boligtype && kvartalFrom && kvartalTo) {
-      const localCom = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
+      const localCom = localStorage.getItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`);
       const params = new URLSearchParams(window.location.search);
       const externalCom = params.get('comment');
       if (localCom && externalCom && (localCom !== externalCom)) {
-        ctx?.setAppState((prev: IAppContext) => ({...prev, comment: "***You LocalStorageComment\n"+ localCom+"\n***Comment from external url:\n"+externalCom}));
+        ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: "***You LocalStorageComment\n" + localCom + "\n***Comment from external url:\n" + externalCom }));
       } else if (localCom) {
-        ctx?.setAppState((prev: IAppContext) => ({...prev, comment: localCom}));
+        ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: localCom }));
       } else if (externalCom) {
-        ctx?.setAppState((prev: IAppContext) => ({...prev, comment: externalCom}));
+        ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: externalCom }));
       }
-      }
-  }, [boligtype , kvartalFrom, kvartalTo]);
+    }
+  }, [boligtype, kvartalFrom, kvartalTo]);
 
   useEffect(() => {
     if (ctx?.settingsState.isHistoryItemClicked) {
       getDataRef.current?.click();
-      ctx?.setSettingsState((prev: IStettingsState) => ({...prev, isHistoryItemClicked: false}));
+      ctx?.setSettingsState((prev: IStettingsState) => ({ ...prev, isHistoryItemClicked: false }));
     }
   }, [ctx?.settingsState.isHistoryItemClicked]);
 
 
   return (
     <MainWrapper>
-      {ctx?.settingsState.isHistoryNavOpen ? <History />: null}
+      {ctx?.settingsState.isHistoryNavOpen ? <History /> : null}
       {isLoaded ? (
         <Wrapper>
-          <Box sx={{ width: 400, marginBottom: 10, marginTop: 12}}>
+          <Box sx={{ width: 400, marginBottom: 10, marginTop: 12 }}>
             <FormControl fullWidth>
               <StyledInputLabel id="input-boligtype-label">Boligtype</StyledInputLabel>
               <Select
-                sx={{ marginBottom: 4}}
+                sx={{ marginBottom: 4 }}
                 {...register("boligtype")}
                 labelId='input-boligtype-label'
                 id="demo-simple-select"
@@ -272,7 +255,7 @@ function FilterPage() {
             <FormControl fullWidth>
               <StyledInputLabel id="input-kvartalFrom-label">KvartalFrom</StyledInputLabel>
               <Select
-                sx={{ marginBottom: 4}}
+                sx={{ marginBottom: 4 }}
                 {...register("kvartalFrom")}
                 labelId='input-kvartalFrom-label'
                 id="input-kvartalFrom"
@@ -290,7 +273,7 @@ function FilterPage() {
             <FormControl fullWidth>
               <StyledInputLabel id="input-kvartalTo-label">KvartalTo</StyledInputLabel>
               <Select
-                sx={{ marginBottom: 4}}
+                sx={{ marginBottom: 4 }}
                 {...register("kvartalTo")}
                 labelId='input-kvartalTo-label'
                 id="input-kvartalTo"
@@ -306,43 +289,43 @@ function FilterPage() {
               </Select>
             </FormControl>
             {message && <Message>{message}</Message>}
-          { isFetchingChartData ? (
-            <LoadingButton loading 
-              sx={{width: '100%', height: '56px'}} 
-              color="success" variant="contained">
+            {isFetchingChartData ? (
+              <LoadingButton loading
+                sx={{ width: '100%', height: '56px' }}
+                color="success" variant="contained">
                 Get Data
-            </LoadingButton>
-          ): (
-            <Button 
-              ref={getDataRef}
-              sx={{width: '100%', height: '56px'}} 
-              color="success" variant="contained" onClick={handleSubmit(onSubmit)}>
+              </LoadingButton>
+            ) : (
+              <Button
+                ref={getDataRef}
+                sx={{ width: '100%', height: '56px' }}
+                color="success" variant="contained" onClick={handleSubmit(onSubmit)}>
                 Get Data
-            </Button>
-          )}
+              </Button>
+            )}
           </Box>
-          <TextField 
-              multiline
-              rows={4}
-              id="outlined-basic" label="Add Comment" variant="outlined" 
-              sx={{width: 600, maxHeight: 200}}
-              value={comment}
-              onChange={onChangeComment}
-            />
-          { isChartVisible ?
-          (<Box sx={{width: '80%', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <BarChart data={chartData} labels={quartersBetween} name={allData?.label ?? "" } 
-              isFetchingChartData={isFetchingChartData} comment={comment ?? ''}
-            />
-          </Box>)
-          : (null)
+          <TextField
+            multiline
+            rows={4}
+            id="outlined-basic" label="Add Comment" variant="outlined"
+            sx={{ width: 600, maxHeight: 200 }}
+            value={comment}
+            onChange={onChangeComment}
+          />
+          {isChartVisible ?
+            (<Box sx={{ width: '80%', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <BarChart data={chartData} labels={quartersBetween} name={allData?.label ?? ""}
+                isFetchingChartData={isFetchingChartData} comment={comment ?? ''}
+              />
+            </Box>)
+            : (null)
           }
         </Wrapper>
-      ) : 
-      (
-         <FilterSkeleton />
-      )}
-    </MainWrapper> 
+      ) :
+        (
+          <FilterSkeleton />
+        )}
+    </MainWrapper>
   )
 }
 

@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 const FilterSkeleton = () => {
     return (
         <Wrapper>
-            <Box sx={{ width: 400, flexDirection: 'column',  display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Box sx={{ width: 400, flexDirection: 'column', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Skeleton variant="text" sx={{ width: 400, fontSize: '1rem' }} />
                 <Skeleton variant="rectangular" width={400} height={60} />
                 <Skeleton variant="text" sx={{ width: 400, fontSize: '1rem' }} />

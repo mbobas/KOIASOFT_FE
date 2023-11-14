@@ -17,8 +17,8 @@ export interface IAppContext {
     kvartalTo: string;
     comment: string;
     historyList: IHistoryList[];
-   }
-  
+}
+
 export const initialMainState: IAppContext = {
     boligtype: '',
     kvartalFrom: '',
@@ -34,5 +34,5 @@ export interface ContextProps {
     settingsState: any;
     setSettingsState: any
 }
-  
+
 export const appContext = createContext<ContextProps | null>(null);

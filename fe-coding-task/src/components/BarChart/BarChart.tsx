@@ -30,7 +30,7 @@ export interface BarChartProps {
   comment: string;
 }
 
-const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartProps) => {
+const BarChart = ({ data, labels, name, isFetchingChartData, comment }: BarChartProps) => {
   const [dataToDownload, setDataToDownload] = useState<DatatoDownload[] | null>(null);
   const ctx = useContext(appContext);
   const boligtype = ctx?.appState.boligtype;
@@ -49,11 +49,11 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       kvartalTo: kvartalTo,
       comment: comment,
     }
-  
+
     if (localHistory) {
       const parsedLocalHistory = JSON.parse(localHistory);
       const existingIndex = parsedLocalHistory.findIndex((h: any) => h.id === historyRow.id);
-      
+
       if (existingIndex !== -1) {
         parsedLocalHistory[existingIndex] = historyRow;
         setSavingMessage('Data updated');
@@ -64,19 +64,19 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       }
 
       localStorage.setItem('history', JSON.stringify(parsedLocalHistory));
-      ctx?.setAppState({...ctx.appState, historyList: parsedLocalHistory});
+      ctx?.setAppState({ ...ctx.appState, historyList: parsedLocalHistory });
       setIsSaving(false);
     } else {
       localStorage.setItem('history', JSON.stringify([historyRow]));
-      ctx?.setAppState({...ctx.appState, historyList: [historyRow]});
+      ctx?.setAppState({ ...ctx.appState, historyList: [historyRow] });
       setIsSaving(false);
     }
-    ctx?.setSettingsState((prev: any) => ({...prev, isHistoryNavOpen: true}));
+    ctx?.setSettingsState((prev: any) => ({ ...prev, isHistoryNavOpen: true }));
     setTimeout(() => {
       setSavingMessage('Add data to history');
     }, 2000);
   }
-  
+
   const dataModel = {
     labels: labels,
     datasets: [
@@ -112,7 +112,7 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
     },
     plugins: {
       legend: {
-        display: false, 
+        display: false,
       },
     }
   };
@@ -128,44 +128,44 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
   }, [data, labels])
 
   return (
-   <>
-   {isFetchingChartData ? (
-    <Wrapper>
-      <Skeleton variant="rectangular" width={800} height={400} />
-    </Wrapper>
-   ) : (
-    <Wrapper>
-    <Box sx={{marginTop: 4, height: 100, width: 600, display: "flex", justifyContent: "space-between" }}>
-      <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-      <Button 
-          sx={{width: 250, height: '56px'}} 
-          color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
-            Download Chart *.csv
-      </Button>
-      </Box>
-      <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-        {isSaving ? (
-          <LoadingButton loading 
-            sx={{width: '100%', height: '56px'}} 
-            color="success" variant="contained">
-              Get Data
-          </LoadingButton>
-        ): (
-          <>
-            <Button 
-              sx={{width: 250, height: '56px'}} 
-              color="success" variant="outlined" onClick={onSaveData}>
-                {savingMessage}
-            </Button>
-           </>
-        )}
-      </Box>
-    </Box>
-      <Title>{name}</Title>
-      <Bar data={dataModel} options={options} />
-  </Wrapper>
-   )}
-   </>
+    <>
+      {isFetchingChartData ? (
+        <Wrapper>
+          <Skeleton variant="rectangular" width={800} height={400} />
+        </Wrapper>
+      ) : (
+        <Wrapper>
+          <Box sx={{ marginTop: 4, height: 100, width: 600, display: "flex", justifyContent: "space-between" }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                sx={{ width: 250, height: '56px' }}
+                color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
+                Download Chart *.csv
+              </Button>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+              {isSaving ? (
+                <LoadingButton loading
+                  sx={{ width: '100%', height: '56px' }}
+                  color="success" variant="contained">
+                  Get Data
+                </LoadingButton>
+              ) : (
+                <>
+                  <Button
+                    sx={{ width: 250, height: '56px' }}
+                    color="success" variant="outlined" onClick={onSaveData}>
+                    {savingMessage}
+                  </Button>
+                </>
+              )}
+            </Box>
+          </Box>
+          <Title>{name}</Title>
+          <Bar data={dataModel} options={options} />
+        </Wrapper>
+      )}
+    </>
   );
 };
 
