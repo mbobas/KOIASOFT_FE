@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import 'App.css';
 import { IApiResponse, getVariables, postChartData } from 'api/api';
 import { useForm, SubmitHandler } from "react-hook-form"
@@ -15,6 +15,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from 'react-router-dom';
 import History from 'components/History/History';
 import { COLORS } from 'gloabls/colors';
+import { IAppContext, IStettingsState, appContext } from 'state/context';
 
 const MainWrapper = styled.div`
   display: flex;
@@ -67,6 +68,8 @@ interface IDataToQuery {
 
 
 function FilterPage() {
+  const ctx = useContext(appContext);
+  
   const { register, handleSubmit } = useForm<IDataToQuery>()
   
   const [boligtypes, setBoligtypes] = useState<Boligtype[]>([{value: '', valueText: ''}]);
@@ -211,7 +214,7 @@ function FilterPage() {
 
   return (
     <MainWrapper>
-      <History />
+      {ctx?.settingsState.isHistoryNavOpen ? <History />: null}
       {isLoaded ? (
         <Wrapper>
           <Box sx={{ minWidth: 400, marginBottom: 10, marginTop: 12}}>

@@ -13,11 +13,11 @@ export default function HistoryCard() {
       <CardMedia
         sx={{ height: 80 }}
         image={chart}
-        title="green iguana"
+        title="charts"
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">
-          Kvartal 2010K1 - 2021K2
+          2010K1 - 2021K2
         </Typography>
         <Typography variant="body2" color="text.secondary">
          Comment Comment Comment

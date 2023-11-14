@@ -10,6 +10,7 @@ import { COLORS } from 'gloabls/colors';
 import styled from '@emotion/styled';
 import { Card } from '@mui/material';
 import HistoryCard from './HistoryCard';
+import { ReactComponent as CloseButton } from 'assets/svg/closeButton.svg';
 
 const Wrapper = styled.div`
     position: fixed;
@@ -17,7 +18,7 @@ const Wrapper = styled.div`
     top: 0;
     width: 300px;
     height: 100vh;
-    z-index: 10;
+    z-index: 5;
     background-color: ${COLORS.green};
     opacity: 0.9;
     display: flex;
@@ -39,28 +40,29 @@ const HistoryList = styled.div`
   justify-content: flex-start;
   margin-top: 50px;
   width: 100%;
+  margin-top: 50px;
 `;
 
 
 export default function History() {
   return (
     <Wrapper>
-       <HistoryList>
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-          <HistoryCard />
-       </HistoryList>
+      <HistoryList>
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+        <HistoryCard />
+      </HistoryList>
     </Wrapper>
   );
 }

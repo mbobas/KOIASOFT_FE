@@ -7,10 +7,21 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { COLORS } from 'gloabls/colors';
+import { appContext } from 'state/context';
+import { useContext } from 'react';
 
 export default function NavBar() {
+  const ctx = useContext(appContext);
+
+  const onClickHistoryMenu = () => {
+    ctx?.setSettingsState((prevState: any) => ({
+      ...prevState,
+      isHistoryNavOpen: prevState.isHistoryNavOpen ? false : true
+    }));
+  }
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, zIndex: 11}}>
       <AppBar position="static" sx={{position: "fixed", backgroundColor: COLORS.green}}>
         <Toolbar sx={{ display: "flex", justifyContent: 'flex-end' }}>
           <Typography variant="h6" component="div">
@@ -22,7 +33,7 @@ export default function NavBar() {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <MenuIcon onClick={onClickHistoryMenu}/>
           </IconButton>
           </Typography>
         </Toolbar>
