@@ -50,10 +50,9 @@ export default function HistoryCard({item}: IHistoryCardProps) {
 
     const onShareLink = () => {
           const baseUrl = window.location.origin
-          const url = `${baseUrl}/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`
-          // skopiouj ten adres do schowka i pokaz tooltip ze skopiowano przy kliknieciu
+          const url = `${baseUrl}/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}&run=true`
           navigator.clipboard.writeText(url)
-          
+
         }
 
     useEffect(() => {

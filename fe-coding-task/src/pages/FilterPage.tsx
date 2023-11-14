@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import 'App.css';
 import { IApiResponse, getVariables, postChartData } from 'api/api';
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, set } from "react-hook-form"
 import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -90,11 +90,12 @@ function FilterPage() {
  
   const navigate = useNavigate();
 
-  const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string) => {
-    navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}`);
+  const updateUrlAndLocalStorage= (boligtype:string, kvartalFrom: string, kvartalTo: string, comment?: string) => {
+    navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`);
     localStorage.setItem('boligtype', boligtype);
     localStorage.setItem('kvartalFrom', kvartalFrom);
     localStorage.setItem('kvartalTo', kvartalTo);
+    localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, comment ?? '');
   };
 
   const onSubmit: SubmitHandler<IDataToQuery> = () => {
@@ -184,20 +185,29 @@ function FilterPage() {
     const boligtype = params.get('boligtype');
     const kvartalFrom = params.get('kvartalFrom');
     const kvartalTo = params.get('kvartalTo');
+    const comment = params.get('comment');
+    const run = params.get('run');
     if (boligtype && kvartalFrom && kvartalTo) {
-      // setBoligtype(boligtype);
       ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo});
-      // setKvartalFrom(kvartalFrom);
-      // setKvartalTo(kvartalTo);
+      if (comment) {
+        setComment(comment);
+      }
+      if (run == 'true') {
+        setTimeout(() => {
+          getDataRef.current?.click();
+          console.log('ruuuun')
+        }, 3000);
+      }
     } else if (localStorage.getItem('boligtype') && localStorage.getItem('kvartalFrom') && localStorage.getItem('kvartalTo')) {
       const boligtype = localStorage.getItem('boligtype');
       const kvartalFrom = localStorage.getItem('kvartalFrom');
       const kvartalTo = localStorage.getItem('kvartalTo');
+      const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
       if (boligtype && kvartalFrom && kvartalTo) {
-        // setBoligtype(boligtype);
         ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo});
-        // setKvartalFrom(kvartalFrom);
-        // setKvartalTo(kvartalTo);
+        if (comment) {
+          setComment(comment);
+        }
       } 
     }
   }, []);
@@ -207,16 +217,17 @@ function FilterPage() {
   }, [chartData]);
 
   useEffect(() => {
-    updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '');
-    if (localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`)) {
-      const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
-      if (comment) {
-        setComment(comment);
-      }
-    }  else {
-      setComment('');
-    }
-  }, [boligtype , kvartalFrom, kvartalTo]);
+
+    updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '', comment ?? '');
+    // if (localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`)) {
+    //   const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
+    //   if (comment) {
+    //     setComment(comment);
+    //   }
+    // }  else {
+    //   setComment('');
+    // }
+  }, [boligtype , kvartalFrom, kvartalTo, comment]);
 
   useEffect(() => {
     if (ctx?.settingsState.isHistoryItemClicked) {
