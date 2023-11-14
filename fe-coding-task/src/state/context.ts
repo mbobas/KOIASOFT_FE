@@ -28,7 +28,7 @@ export interface IAppContext {
     kvartalFrom: string;
     kvartalTo: string;
     comment: string;
-    histroyList: IHistoryList[];
+    historyList: IHistoryList[];
    }
   
 export const initialMainState: IAppContext = {
@@ -36,7 +36,7 @@ export const initialMainState: IAppContext = {
     kvartalFrom: '',
     kvartalTo: '',
     comment: '',
-    histroyList: [],
+    historyList: [],
     boligtypeList: []
 }
   

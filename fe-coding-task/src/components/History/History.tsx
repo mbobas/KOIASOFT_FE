@@ -55,19 +55,19 @@ export default function History() {
     const localHistory = localStorage.getItem('history');
     ctx?.setAppState((prev: IAppContext) => ({
       ...prev,
-      histroyList: localHistory ? JSON.parse(localHistory) : []
+      historyList: localHistory ? JSON.parse(localHistory) : []
     }))
   }, [])
 
   useEffect(() => {
-    if (ctx?.appState.histroyList.length === 0)
-      setHList(ctx?.appState.histroyList)
-  }, [ctx?.appState.histroyList])
+    if (ctx?.appState.historyList.length === 0)
+      setHList(ctx?.appState.historyList)
+  }, [ctx?.appState.historyList])
 
   return (
     <Wrapper>
       <HistoryList>
-        {ctx?.appState.histroyList.reverse().map((item: IHistoryList) => (
+        {ctx?.appState.historyList.reverse().map((item: IHistoryList) => (
           <HistoryCard key={item.id} item={item} />
         ))}
       </HistoryList>

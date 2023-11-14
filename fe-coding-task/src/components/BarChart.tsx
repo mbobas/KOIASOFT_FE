@@ -5,6 +5,9 @@ import styled from '@emotion/styled';
 import { Box, Button, ButtonGroup, Skeleton } from '@mui/material';
 import { downloadCSV } from 'utils/functions';
 import { appContext } from 'state/context';
+import { COLORS } from 'gloabls/colors';
+import { LoadingButton } from '@mui/lab';
+import { set } from 'react-hook-form';
 
 interface BarChartProps {
   data: number[];
@@ -32,40 +35,54 @@ const Wrapper = styled.div`
 const Title = styled.h3`
 `;
 
+const StyledSpan = styled.span`
+  color: ${COLORS.red};
+  font-size: 14px;
+  margin-top: 5px;
+`;
+
 const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartProps) => {
   const [dataToDownload, setDataToDownload] = useState<DatatoDownload[] | null>(null);
   const ctx = useContext(appContext);
   const boligtype = ctx?.appState.boligtype;
   const kvartalFrom = ctx?.appState.kvartalFrom;
   const kvartalTo = ctx?.appState.kvartalTo;
-  
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [savingMessage, setSavingMessage] = useState<string>('');
 
   const onSaveData = () => {
+    setIsSaving(true);
     const localHistory = localStorage.getItem('history');
-
     const historyRow = {
-      id: `comment_${boligtype }_${kvartalFrom}_${kvartalTo}`,
-      boliType: boligtype,
+      id: `comment_${boligtype}_${kvartalFrom}_${kvartalTo}`,
+      boligtype: boligtype,
       kvartalFrom: kvartalFrom,
       kvartalTo: kvartalTo,
       comment: comment,
     }
-
+  
     if (localHistory) {
       const parsedLocalHistory = JSON.parse(localHistory);
-      // sprawdz czy juz jest taki wpis po id
-      // jesli jest to zastap
-      // jesli nie ma to dodaj
+      const existingIndex = parsedLocalHistory.findIndex((h: any) => h.id === historyRow.id);
+      
+      if (existingIndex !== -1) {
+        parsedLocalHistory[existingIndex] = historyRow;
+        setSavingMessage('Data updated successfully');
 
-      const newLocalHistory = [...parsedLocalHistory, historyRow]
-      localStorage.setItem('history', JSON.stringify(newLocalHistory));
-      ctx?.setAppState({...ctx.appState, histroyList: newLocalHistory});
+      } else {
+        parsedLocalHistory.push(historyRow);
+        setSavingMessage('Data saved successfully');
+      }
+
+      localStorage.setItem('history', JSON.stringify(parsedLocalHistory));
+      ctx?.setAppState({...ctx.appState, historyList: parsedLocalHistory});
+      setIsSaving(false);
     } else {
       localStorage.setItem('history', JSON.stringify([historyRow]));
-      ctx?.setAppState({...ctx.appState, histroyList: [historyRow]});
+      ctx?.setAppState({...ctx.appState, historyList: [historyRow]});
+      setIsSaving(false);
     }
   }
-
   
   const dataModel = {
     labels: labels,
@@ -127,16 +144,32 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
    ) : (
     <Wrapper>
     <Box sx={{marginTop: 4, height: 100, width: 600, display: "flex", justifyContent: "space-between" }}>
+      <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
       <Button 
           sx={{width: 250, height: '56px'}} 
           color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
             Download Chart Data *.csv
       </Button>
-      <Button 
-          sx={{width: 250, height: '56px'}} 
-          color="success" variant="outlined" onClick={onSaveData}>
-            Save data in history
-      </Button>
+      {downloadingMessage && <StyledSpan>{downloadingMessage}</StyledSpan>}
+      </Box>
+      <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        {isSaving ? (
+          <LoadingButton loading 
+            sx={{width: '100%', height: '56px'}} 
+            color="success" variant="contained">
+              Get Data
+          </LoadingButton>
+        ): (
+          <>
+            <Button 
+              sx={{width: 250, height: '56px'}} 
+              color="success" variant="outlined" onClick={onSaveData}>
+                Save data in history
+            </Button>
+            {savingMessage && <StyledSpan>{savingMessage}</StyledSpan>}
+           </>
+        )}
+      </Box>
     </Box>
       <Title>{name}</Title>
       <Bar data={dataModel} options={options} />
