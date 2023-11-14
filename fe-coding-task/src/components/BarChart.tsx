@@ -96,12 +96,12 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
     <Box sx={{marginTop: 4, height: 100, width: 600, display: "flex", justifyContent: "space-between" }}>
       <Button 
           sx={{width: 250, height: '56px'}} 
-          color="error" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
+          color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
             Download Chart Data *.csv
       </Button>
       <Button 
           sx={{width: 250, height: '56px'}} 
-          color="error" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
+          color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
             Save data in history
       </Button>
     </Box>

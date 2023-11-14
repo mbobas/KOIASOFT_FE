@@ -276,13 +276,13 @@ function FilterPage() {
           { isFetchingChartData ? (
             <LoadingButton loading 
               sx={{width: '100%', height: '56px'}} 
-              color="success" variant="outlined">
+              color="success" variant="contained">
                 Get Data
             </LoadingButton>
           ): (
             <Button 
               sx={{width: '100%', height: '56px'}} 
-              color="success" variant="outlined" onClick={handleSubmit(onSubmit)}>
+              color="success" variant="contained" onClick={handleSubmit(onSubmit)}>
                 Get Data
             </Button>
           )}

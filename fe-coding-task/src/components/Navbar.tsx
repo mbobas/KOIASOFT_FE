@@ -22,7 +22,7 @@ export default function NavBar() {
 
   return (
     <Box sx={{ flexGrow: 1, zIndex: 11}}>
-      <AppBar position="static" sx={{position: "fixed", backgroundColor: COLORS.green}}>
+      <AppBar position="static" sx={{zIndex: 11, position: "fixed", backgroundColor: COLORS.green}}>
         <Toolbar sx={{ display: "flex", justifyContent: 'flex-end' }}>
           <Typography variant="h6" component="div">
             History
