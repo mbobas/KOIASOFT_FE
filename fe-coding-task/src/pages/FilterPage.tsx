@@ -49,7 +49,7 @@ const Message = styled.p`
 `;
 
 
-interface Boligtype {
+export interface Boligtype {
   value: string;
   valueText: string;
 }
@@ -178,6 +178,10 @@ function FilterPage() {
     }
     fetchVariables();
   }, []);
+
+  useEffect(() => {
+    ctx?.setAppState((prev: IAppContext) => ({...prev, boligtypeList: boligtypes}));
+  }, [boligtypes]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

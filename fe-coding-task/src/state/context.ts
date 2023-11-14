@@ -14,11 +14,21 @@ export interface ContextProps {
     setSettingsState: any
 }
 
-export interface IAppContext {
+export interface IHistoryList {
+    id: string
     boligtype: string;
     kvartalFrom: string;
     kvartalTo: string;
     comment: string;
+}
+
+export interface IAppContext {
+    boligtype: string;
+    boligtypeList: string[];
+    kvartalFrom: string;
+    kvartalTo: string;
+    comment: string;
+    histroyList: IHistoryList[];
    }
   
 export const initialMainState: IAppContext = {
@@ -26,6 +36,8 @@ export const initialMainState: IAppContext = {
     kvartalFrom: '',
     kvartalTo: '',
     comment: '',
+    histroyList: [],
+    boligtypeList: []
 }
   
 export const appContext = createContext<ContextProps | null>(null);

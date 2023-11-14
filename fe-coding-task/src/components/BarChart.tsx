@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import styled from '@emotion/styled';
 import { Box, Button, ButtonGroup, Skeleton } from '@mui/material';
 import { downloadCSV } from 'utils/functions';
+import { appContext } from 'state/context';
 
 interface BarChartProps {
   data: number[];
@@ -33,6 +34,38 @@ const Title = styled.h3`
 
 const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartProps) => {
   const [dataToDownload, setDataToDownload] = useState<DatatoDownload[] | null>(null);
+  const ctx = useContext(appContext);
+  const boligtype = ctx?.appState.boligtype;
+  const kvartalFrom = ctx?.appState.kvartalFrom;
+  const kvartalTo = ctx?.appState.kvartalTo;
+  
+
+  const onSaveData = () => {
+    const localHistory = localStorage.getItem('history');
+
+    const historyRow = {
+      id: `comment_${boligtype }_${kvartalFrom}_${kvartalTo}`,
+      boliType: boligtype,
+      kvartalFrom: kvartalFrom,
+      kvartalTo: kvartalTo,
+      comment: comment,
+    }
+
+    if (localHistory) {
+      const parsedLocalHistory = JSON.parse(localHistory);
+      // sprawdz czy juz jest taki wpis po id
+      // jesli jest to zastap
+      // jesli nie ma to dodaj
+
+      const newLocalHistory = [...parsedLocalHistory, historyRow]
+      localStorage.setItem('history', JSON.stringify(newLocalHistory));
+      ctx?.setAppState({...ctx.appState, histroyList: newLocalHistory});
+    } else {
+      localStorage.setItem('history', JSON.stringify([historyRow]));
+      ctx?.setAppState({...ctx.appState, histroyList: [historyRow]});
+    }
+  }
+
   
   const dataModel = {
     labels: labels,
@@ -101,7 +134,7 @@ const BarChart = ({data, labels, name, isFetchingChartData, comment}: BarChartPr
       </Button>
       <Button 
           sx={{width: 250, height: '56px'}} 
-          color="success" variant="outlined" onClick={() => downloadCSV(dataToDownload)}>
+          color="success" variant="outlined" onClick={onSaveData}>
             Save data in history
       </Button>
     </Box>

@@ -11,6 +11,9 @@ import styled from '@emotion/styled';
 import { Card } from '@mui/material';
 import HistoryCard from './HistoryCard';
 import { ReactComponent as CloseButton } from 'assets/svg/closeButton.svg';
+import { useContext, useEffect } from 'react';
+import { IAppContext, IHistoryList, appContext } from 'state/context';
+import { set } from 'react-hook-form';
 
 const Wrapper = styled.div`
     position: fixed;
@@ -45,23 +48,28 @@ const HistoryList = styled.div`
 
 
 export default function History() {
+  const ctx = useContext(appContext)
+  const [hList, setHList] = React.useState<IHistoryList[]>([])
+
+  useEffect(() => {
+    const localHistory = localStorage.getItem('history');
+    ctx?.setAppState((prev: IAppContext) => ({
+      ...prev,
+      histroyList: localHistory ? JSON.parse(localHistory) : []
+    }))
+  }, [])
+
+  useEffect(() => {
+    if (ctx?.appState.histroyList.length === 0)
+      setHList(ctx?.appState.histroyList)
+  }, [ctx?.appState.histroyList])
+
   return (
     <Wrapper>
       <HistoryList>
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
-        <HistoryCard />
+        {ctx?.appState.histroyList.reverse().map((item: IHistoryList) => (
+          <HistoryCard key={item.id} item={item} />
+        ))}
       </HistoryList>
     </Wrapper>
   );

@@ -6,8 +6,28 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import chart from 'assets/img/chart.jpeg';
+import { IHistoryList, appContext } from 'state/context';
+import { Boligtype } from 'pages/FilterPage';
+import { useEffect } from 'react';
 
-export default function HistoryCard() {
+
+
+interface IHistoryCardProps {
+    item: IHistoryList
+}
+
+export default function HistoryCard({item}: IHistoryCardProps) {
+    const {boligtype, kvartalFrom, kvartalTo, comment} = item;
+    const ctx = React.useContext(appContext)
+    const [boligTypeName, setBoligTypeName] = React.useState<string>('')
+
+    useEffect(() => {
+        const bname = ctx?.settingsState?.boligtypeList?.find((item: Boligtype ) => item.value === boligtype)?.name;
+        if (bname) {
+            setBoligTypeName(bname)
+        }
+    }, [])
+
   return (
     <Card sx={{ width: "80%", marginBottom: 2 }}>
       <CardMedia
@@ -17,10 +37,10 @@ export default function HistoryCard() {
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">
-          2010K1 - 2021K2 - Boligtype
+          {kvartalFrom} - {kvartalTo} - {boligTypeName}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-            Comment Comment Comment
+            {comment}
         </Typography>
       </CardContent>
       <CardActions>
