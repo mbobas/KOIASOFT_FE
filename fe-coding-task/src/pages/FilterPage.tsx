@@ -75,6 +75,7 @@ function FilterPage() {
   const [boligtype, setBoligtype] = useState<string>('');
   const [kvartalFrom, setKvartalFrom] = useState<string>('');
   const [kvartalTo, setKvartalTo] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -84,7 +85,6 @@ function FilterPage() {
   const [allData, setAllData] = useState<IApiResponse | null>(null);
   const [isChartVisible, setIsChartVisible] = useState<boolean>(false);
   const [isFetchingChartData, setFetchingChartData] = useState<boolean>(false);
-  const [comment, setComment] = useState<string>('');
  
   const navigate = useNavigate();
 

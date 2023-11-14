@@ -15,11 +15,18 @@ export interface ContextProps {
 }
 
 export interface IAppContext {
-    
+    boligtype: string;
+    kvartalFrom: string;
+    kvartalTo: string;
+    comment: string;
+
    }
   
 export const initialMainState: IAppContext = {
-
+    boligtype: '',
+    kvartalFrom: '',
+    kvartalTo: '',
+    comment: '',
 }
   
 export const appContext = createContext<ContextProps | null>(null);
