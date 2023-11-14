@@ -69,21 +69,24 @@ interface IDataToQuery {
 
 function FilterPage() {
   const ctx = useContext(appContext);
+  const boligtype = ctx?.appState.boligtype;
+  const kvartalFrom = ctx?.appState.kvartalFrom;
+  const kvartalTo = ctx?.appState.kvartalTo;
   
   const { register, handleSubmit } = useForm<IDataToQuery>()
   
   const [boligtypes, setBoligtypes] = useState<Boligtype[]>([{value: '', valueText: ''}]);
   const [kvartals, setKvartals] = useState<Kvartal[]>([{value: '', valueText: ''}]);
 
-  const [boligtype, setBoligtype] = useState<string>('');
-  const [kvartalFrom, setKvartalFrom] = useState<string>('');
-  const [kvartalTo, setKvartalTo] = useState<string>('');
+  // const [boligtype, setBoligtype] = useState<string>('');
+  // const [kvartalFrom, setKvartalFrom] = useState<string>('');
+  // const [kvartalTo, setKvartalTo] = useState<string>('');
   const [comment, setComment] = useState<string>('');
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
 
-  const [chartData, setChartData] = useState<number[]>([]); // make a interface for this
+  const [chartData, setChartData] = useState<number[]>([]);
   const [quartersBetween, setQuartersBetween] = useState<string[]>([]);
   const [allData, setAllData] = useState<IApiResponse | null>(null);
   const [isChartVisible, setIsChartVisible] = useState<boolean>(false);
@@ -96,10 +99,9 @@ function FilterPage() {
     localStorage.setItem('boligtype', boligtype);
     localStorage.setItem('kvartalFrom', kvartalFrom);
     localStorage.setItem('kvartalTo', kvartalTo);
-    // localStorage.setItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`, comment);
   };
 
-  const onSubmit: SubmitHandler<IDataToQuery> = (data) => {
+  const onSubmit: SubmitHandler<IDataToQuery> = () => {
     setFetchingChartData(true);
     if (!boligtype || !kvartalFrom || !kvartalTo) {
       setMessage('Please fill all fields');
@@ -123,7 +125,7 @@ function FilterPage() {
           }
       }
       const quarters = generateQuartersBetween(kvartalFrom, kvartalTo);
-      fetchChartData(boligtype, quarters);
+      fetchChartData(boligtype , quarters);
     } else {
       setMessage('KvartalFrom must be smaller than KvartalTo or equal');
       setFetchingChartData(false);
@@ -139,26 +141,28 @@ function FilterPage() {
 
   const handleChangeBoligtype = (event: any) => {
     const value = event.target.value;
-    setBoligtype(value);
+    ctx?.setAppState({...ctx.appState, boligtype: value});
     onChangeSelect();
   }
 
   const handleChangeKvartalFrom = (event: any) => {
     const value = event.target.value;
-    setKvartalFrom(value);
+    ctx?.setAppState({...ctx.appState, kvartalFrom: value});
+    // setKvartalFrom(value);
     onChangeSelect();
   }
 
   const handleChangeKvartalTo = (event: any) => {
     const value = event.target.value;
-    setKvartalTo(value);
+    ctx?.setAppState({...ctx.appState, kvartalTo: value});
+    // setKvartalTo(value);
     onChangeSelect();
   }
 
   const onChangeComment = (event: any) => {
     const value = event.target.value;
     setComment(value);
-    localStorage.setItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`, value);
+    localStorage.setItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`, value);
   }
 
   useEffect(() => {
@@ -181,17 +185,19 @@ function FilterPage() {
     const kvartalFrom = params.get('kvartalFrom');
     const kvartalTo = params.get('kvartalTo');
     if (boligtype && kvartalFrom && kvartalTo) {
-      setBoligtype(boligtype);
-      setKvartalFrom(kvartalFrom);
-      setKvartalTo(kvartalTo);
+      // setBoligtype(boligtype);
+      ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo});
+      // setKvartalFrom(kvartalFrom);
+      // setKvartalTo(kvartalTo);
     } else if (localStorage.getItem('boligtype') && localStorage.getItem('kvartalFrom') && localStorage.getItem('kvartalTo')) {
       const boligtype = localStorage.getItem('boligtype');
       const kvartalFrom = localStorage.getItem('kvartalFrom');
       const kvartalTo = localStorage.getItem('kvartalTo');
       if (boligtype && kvartalFrom && kvartalTo) {
-        setBoligtype(boligtype);
-        setKvartalFrom(kvartalFrom);
-        setKvartalTo(kvartalTo);
+        // setBoligtype(boligtype);
+        ctx?.setAppState({...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo});
+        // setKvartalFrom(kvartalFrom);
+        // setKvartalTo(kvartalTo);
       } 
     }
   }, []);
@@ -201,16 +207,16 @@ function FilterPage() {
   }, [chartData]);
 
   useEffect(() => {
-    updateUrlAndLocalStorage(boligtype, kvartalFrom, kvartalTo);
-    if (localStorage.getItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`)) {
-      const comment = localStorage.getItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`);
+    updateUrlAndLocalStorage(boligtype ?? '', kvartalFrom ?? '', kvartalTo ?? '');
+    if (localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`)) {
+      const comment = localStorage.getItem(`comment_${boligtype }_${kvartalFrom}_${kvartalTo}`);
       if (comment) {
         setComment(comment);
       }
     }  else {
       setComment('');
     }
-  }, [boligtype, kvartalFrom, kvartalTo]);
+  }, [boligtype , kvartalFrom, kvartalTo]);
 
   return (
     <MainWrapper>
