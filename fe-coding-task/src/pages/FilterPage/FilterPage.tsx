@@ -73,7 +73,7 @@ function FilterPage() {
   const [isFetchingChartData, setFetchingChartData] = useState<boolean>(false);
 
   const updateUrlAndLocalStorage = (boligtype: string, kvartalFrom: string, kvartalTo: string, comment: string) => {
-    navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}&comment=${comment}`);
+    navigate(`/?boligtype=${boligtype}&kvartalFrom=${kvartalFrom}&kvartalTo=${kvartalTo}`);
     localStorage.setItem('boligtype', boligtype);
     localStorage.setItem('kvartalFrom', kvartalFrom);
     localStorage.setItem('kvartalTo', kvartalTo);
@@ -213,11 +213,12 @@ function FilterPage() {
       const localCom = localStorage.getItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`);
       const params = new URLSearchParams(window.location.search);
       const externalCom = params.get('comment');
-      if (localCom && externalCom && (localCom !== externalCom)) {
-        ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: "***You LocalStorageComment\n" + localCom + "\n***Comment from external url:\n" + externalCom }));
-      } else if (localCom) {
+      if (localCom && externalCom) {
         ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: localCom }));
-      } else if (externalCom) {
+        localStorage.setItem(`comment_${boligtype}_${kvartalFrom}_${kvartalTo}`, localCom);
+      } else if (localCom && !externalCom) {
+        ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: localCom }));
+      } else if (externalCom && !localCom) {
         ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: externalCom }));
       }
     }
