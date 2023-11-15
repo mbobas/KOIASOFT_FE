@@ -173,10 +173,12 @@ function FilterPage() {
       localStorage.setItem('history', JSON.stringify([exampleItem]));
     }
     fetchVariables();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     ctx?.setAppState((prev: IAppContext) => ({ ...prev, boligtypeList: boligtypes }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boligtypes]);
 
   useEffect(() => {
@@ -188,7 +190,7 @@ function FilterPage() {
     const run = params.get('run');
     if (boligtype && kvartalFrom && kvartalTo) {
       ctx?.setAppState({ ...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment });
-      if (run == 'true') {
+      if (run === 'true') {
         setTimeout(() => {
           getDataRef.current?.click();
         }, 3000);
@@ -202,6 +204,7 @@ function FilterPage() {
         ctx?.setAppState({ ...ctx.appState, boligtype: boligtype, kvartalFrom: kvartalFrom, kvartalTo: kvartalTo, comment: comment });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -218,6 +221,7 @@ function FilterPage() {
         ctx?.setAppState((prev: IAppContext) => ({ ...prev, comment: externalCom }));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boligtype, kvartalFrom, kvartalTo]);
 
   useEffect(() => {
@@ -225,6 +229,7 @@ function FilterPage() {
       getDataRef.current?.click();
       ctx?.setSettingsState((prev: IStettingsState) => ({ ...prev, isHistoryItemClicked: false }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ctx?.settingsState.isHistoryItemClicked]);
 
 

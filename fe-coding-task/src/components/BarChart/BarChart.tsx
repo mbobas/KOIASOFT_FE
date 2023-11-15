@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import { Box, Button, Skeleton } from '@mui/material';
 import { downloadCSV } from 'utils/functions';
 import { appContext } from 'state/context';
-import { COLORS } from 'gloabls/colors';
 import { LoadingButton } from '@mui/lab';
 import { DatatoDownload } from 'state/interfaces';
 
