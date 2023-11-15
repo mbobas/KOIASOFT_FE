@@ -3,11 +3,12 @@ app.post('/api/extract', upload.single('file'), async (req, res) => {
     logInfo('FILE=',req.file);
 
     if (req.body) {
-        const file = req.file;
+        //good option is add some validation to check if not empty 
+        const file = req.file; 
         const requestID = req.body.requestID;
         const project = req.body.project;
         const idUser = req.body.userID;
-        const user = await User.findOne(idUser);
+        const user = await User.findOne(idUser); // good solution to add try catch
 
         if (requestID && project && idUser && user) {
             logDebug('User with role '+user.role, user);
@@ -15,40 +16,40 @@ app.post('/api/extract', upload.single('file'), async (req, res) => {
                 return res.json({requestID, step: 999, status: 'DONE', message: 'Nothing to do for ADVISOR role'});
 
             /* reset status variables */
-            await db.updateStatus(requestID, 1, '');
+            await db.updateStatus(requestID, 1, '');// databse connection is good solution to add try catch
 
             logDebug('CONFIG:', config.projects);
             if (project === 'inkasso' && config.projects.hasOwnProperty(project) && file) {
-                const hashSum = crypto.createHash('sha256');
-                const fileHash = idUser;
+                const hashSum = crypto.createHash('sha256'); // duplicated in uline 55
+                const fileHash = idUser;  // filesHash is always user, when user add more file wil be problem, maybe good option is create hash from file
                 const fileName = 'fullmakt';
                 const fileType = mime.getExtension(file.mimetype);
                 if (fileType !== 'pdf')
                     return res.status(500).json({requestID, message: 'Missing pdf file'});
-                await db.updateStatus(requestID, 3, '');
+                await db.updateStatus(requestID, 3, ''); // databse connection is good solution to add try catch
 
                 const folder = `${project}-signed/${idUser}`;
                 logDebug('FILE2=', file);
-                await uploadToGCSExact(folder, fileHash, fileName, fileType, file.mimetype, file.buffer);
-                await db.updateStatus(requestID, 4, '');
+                await uploadToGCSExact(folder, fileHash, fileName, fileType, file.mimetype, file.buffer); // databse connection is good solution to add try catch
+                await db.updateStatus(requestID, 4, ''); // databse connection is good solution to add try catch
                 const ret = await db.updateUploadedDocs(idUser, requestID, fileName, fileType, file.buffer);
                 logDebug('DB UPLOAD:', ret);
 
-                await db.updateStatus(requestID, 5, '');
+                await db.updateStatus(requestID, 5, ''); // databse connection is good solution to add try catch
 
-                let sent = true;
-                const debtCollectors = await db.getDebtCollectors();
+                let sent = true; //'sent' is declared but its value is never read
+                const debtCollectors = await db.getDebtCollectors();// databse connection is good solution to add try catch
                 logDebug('debtCollectors=', debtCollectors);
                 if (!debtCollectors)
                     return res.status(500).json({requestID, message: 'Failed to get debt collectors'});
-
-                if (!!(await db.hasUserRequestKey(idUser))) { //FIX: check age, not only if there's a request or not
+                // databse connection is good solution to add try catch
+                if (!!(await db.hasUserRequestKey(idUser))) { //FIX: check age, not only if there's a request or not // if its finished, please remove comment 
                     return res.json({requestID, step: 999, status: 'DONE', message: 'Emails already sent'});
                 }
 
                 const sentStatus = {};
                 for (let i = 0; i < debtCollectors.length ; i++) {
-                    await db.updateStatus(requestID, 10+i, '');
+                    await db.updateStatus(requestID, 10+i, '');// databse connection is good solution to add try catch
                     const idCollector = debtCollectors[i].id;
                     const collectorName = debtCollectors[i].name;
                     const collectorEmail = debtCollectors[i].email;
@@ -61,14 +62,15 @@ app.post('/api/extract', upload.single('file'), async (req, res) => {
 
                     const hash = Buffer.from(`${idUser}__${idCollector}`, 'utf8').toString('base64')
 
-                    if (!!(await db.setUserRequestKey(requestKey, idUser))
-                        && !!(await db.setUserCollectorRequestKey(requestKey, idUser, idCollector))) {
+                    if (!!(await db.setUserRequestKey(requestKey, idUser))// databse connection is good solution to add try catch
+                        && !!(await db.setUserCollectorRequestKey(requestKey, idUser, idCollector))) {// databse connection is good solution to add try catch
 
                         /* prepare email */
                         const sendConfig = {
                             sender: config.projects[project].email.sender,
                             replyTo: config.projects[project].email.replyTo,
-                            subject: 'Email subject,
+                            //missed apostrof on the end, is good idead add subject to config? 
+                            subject: 'Email subject,  
                             templateId: config.projects[project].email.template.collector,
                             params: {
                                 downloadUrl: `https://url.go/download?requestKey=${requestKey}&hash=${hash}`,
@@ -91,7 +93,7 @@ app.post('/api/extract', upload.single('file'), async (req, res) => {
                         logDebug('extract() resp=', resp);
 
                         // update DB with result
-                        await db.setUserCollectorRequestKeyRes(requestKey, idUser, idCollector, resp);
+                        await db.setUserCollectorRequestKeyRes(requestKey, idUser, idCollector, resp);// databse connection is good solution to add try catch
 
                         if (!sentStatus[collectorName])
                             sentStatus[collectorName] = {};
@@ -102,22 +104,22 @@ app.post('/api/extract', upload.single('file'), async (req, res) => {
                         }
                     }
                 }
-                await db.updateStatus(requestID, 100, '');
+                await db.updateStatus(requestID, 100, '');// databse connection is good solution to add try catch
 
                 logDebug('FINAL SENT STATUS:');
                 console.dir(sentStatus, {depth: null});
 
                 //if (!allSent)
-                //return res.status(500).json({requestID, message: 'Failed sending email'});
+                //return res.status(500).json({requestID, message: 'Failed sending email'}); // remove unused comment 
 
-                await db.updateStatus(requestID, 500, '');
+                await db.updateStatus(requestID, 500, '');// databse connection is good solution to add try catch
 
                 /* prepare summary email */
                 const summaryConfig = {
-                    //bcc: [{ email: 'tomas@inkassoregisteret.com', name: 'Tomas' }],
+                    //bcc: [{ email: 'tomas@inkassoregisteret.com', name: 'Tomas' }], //remove comment
                     sender: config.projects[project].email.sender,
                     replyTo: config.projects[project].email.replyTo,
-                    subject: 'Oppsummering Kravsforespørsel',
+                    subject: 'Oppsummering Kravsforespørsel', // consider move subject to config
                     templateId: config.projects[project].email.template.summary,
                     params: {
                         collectors: sentStatus,
@@ -127,13 +129,14 @@ app.post('/api/extract', upload.single('file'), async (req, res) => {
                 };
                 logDebug('Summary config:', summaryConfig);
 
+                            // comment to remove 
                 /* send email */
                 //const respSummary = await email.send(sendConfig, config.projects[project].email.apiKey);
                 //logDebug('extract() summary resp=', respSummary);
 
-                await db.updateStatus(requestID, 900, '');
+                await db.updateStatus(requestID, 900, '');// databse connection is good solution to add try catch
             }
-            await db.updateStatus(requestID, 999, '');
+            await db.updateStatus(requestID, 999, '');// databse connection is good solution to add try catch
             return res.json({requestID, step: 999, status: 'DONE', message: 'Done sending emails...'});
         } else
             return res.status(500).json({requestID, message: 'Missing requried input (requestID, project, file)'});
